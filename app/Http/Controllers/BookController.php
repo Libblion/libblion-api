@@ -10,12 +10,12 @@ class BookController extends Controller
 {
     public function index()
     {
-        return response()->json(Book::with(['author', 'category'])->get());
+        return response()->json(Book::with(['author', 'category', 'reviews', 'borrowings'])->get());
     }
 
     public function show($id)
     {
-        $book = Book::with(['author', 'category'])->find($id);
+        $book = Book::with(['author', 'category', 'reviews', 'borrowings'])->find($id);
         if ($book) {
             return response()->json($book);
         } else {
@@ -42,7 +42,7 @@ class BookController extends Controller
         $book = Book::create($validatedData);
         return response()->json([
             'message' => 'Book created successfully',
-            'book' => $book->load(['author', 'category'])
+            'book' => $book->load(['author', 'category', 'reviews', 'borrowings'])
         ], 201);
     }
 
@@ -67,7 +67,7 @@ class BookController extends Controller
             $book->update($validatedData);
             return response()->json([
                 'message' => 'Book updated successfully',
-                'book' => $book->load(['author', 'category'])
+                'book' => $book->load(['author', 'category', 'reviews', 'borrowings'])
             ]);
         } else {
             return response()->json(['message' => 'Book not found'], 404);
