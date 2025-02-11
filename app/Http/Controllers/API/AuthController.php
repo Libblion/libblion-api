@@ -41,7 +41,6 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-
         $request->validate([
 
             'email' => 'required',
@@ -49,14 +48,11 @@ class AuthController extends Controller
         ], [
             'required' => 'inputan :attribute wajib diisi',
         ]);
-
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['eror' => 'Invalid User'], 401);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-
         $user = auth()->user();
-
         return response()->json([
             'message' => 'berhasil login',
             'user' => $user,
@@ -72,6 +68,7 @@ class AuthController extends Controller
         $userData = User::with(['role', 'profile', 'borrowings', 'reviews'])->find($user->id);
 
         return response()->json([
+            'message' => 'user ditemukan',
             'user' => $userData
         ], 200);
     }
