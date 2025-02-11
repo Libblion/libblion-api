@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Mail\GenerateMail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -87,6 +88,25 @@ class AuthController extends Controller
         ], 200);
     }
 
+    public function generateOtpCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ], [
+            'required' => 'inputan :attribute wajib diisi',
+            'email' => 'inputan :attribute harus berformat email'
+        ]);
+
+        $user = User::where('email', $request->input('email'))->first();
+        $user->generateOtp();
+
+        Mail::to($user->email)->send(new GenerateMail($user));
+
+        return response()->json([
+            'message' => 'OTP berhasil di generate, silahkan cek email anda'
+        ]);
+    }
+
     public function verifyAccount(Request $request)
     {
         $request->validate([
@@ -97,7 +117,8 @@ class AuthController extends Controller
         ]);
 
         $user = auth()->user();
-        $otp_code = Otp::where('otp', $request->input('otp'))->first();
+        $otp_code = Otp::where('otp', $request->input('otp'))->where('user_id', $user->id)->first();
+
         if (!$otp_code) {
             return response()->json([
                 'message' => 'OTP tidak ditemukan',
