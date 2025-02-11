@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\BookController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CategoryController;
 
 
 /*
@@ -21,7 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('categories', CategoryController::class);
+
+
 Route::prefix('v1')->group(function () {
     // Auth Route;
     Route::prefix('auth')->group(function () {
@@ -30,4 +32,10 @@ Route::prefix('v1')->group(function () {
         Route::get('me', [AuthController::class, 'currentUser'])->middleware('auth:api');
         Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:api');
     });
+
+    //Categories Route
+    Route::apiResource('categories', CategoryController::class);
+
+    //Books Route
+    Route::apiResource('books', BookController::class);
 });

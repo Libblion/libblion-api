@@ -25,30 +25,50 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->all();
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'description' => 'required|string',
+            'release_year' => 'required|numeric',
+            'author_id' => 'required|exists:authors,id',
+            'category_id' => 'required|exists:categories,id',
+        ]);
 
         if ($request->hasFile('cover_image')) {
             $uploadedFileUrl = Cloudinary::upload($request->file('cover_image')->getRealPath())->getSecurePath();
-            $data['cover_image'] = $uploadedFileUrl;
+            $validatedData['cover_image'] = $uploadedFileUrl;
         }
 
-        $book = Book::create($data);
-        return response()->json($book, 201);
+        $book = Book::create($validatedData);
+        return response()->json([
+            'message' => 'Book created successfully',
+            'book' => $book->load(['author', 'category'])
+        ], 201);
     }
 
     public function update(Request $request, $id)
     {
         $book = Book::find($id);
         if ($book) {
-            $data = $request->all();
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'description' => 'required|string',
+                'release_year' => 'required|numeric',
+                'author_id' => 'required|exists:authors,id',
+                'category_id' => 'required|exists:categories,id',
+            ]);
 
             if ($request->hasFile('cover_image')) {
                 $uploadedFileUrl = Cloudinary::upload($request->file('cover_image')->getRealPath())->getSecurePath();
-                $data['cover_image'] = $uploadedFileUrl;
+                $validatedData['cover_image'] = $uploadedFileUrl;
             }
 
-            $book->update($data);
-            return response()->json($book);
+            $book->update($validatedData);
+            return response()->json([
+                'message' => 'Book updated successfully',
+                'book' => $book->load(['author', 'category'])
+            ]);
         } else {
             return response()->json(['message' => 'Book not found'], 404);
         }
@@ -59,7 +79,7 @@ class BookController extends Controller
         $book = Book::find($id);
         if ($book) {
             $book->delete();
-            return response()->json(['message' => 'Book deleted']);
+            return response()->json(['message' => 'Book deleted successfully']);
         } else {
             return response()->json(['message' => 'Book not found'], 404);
         }
