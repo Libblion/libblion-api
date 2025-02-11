@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,9 +14,32 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use HasApiTokens, HasFactory, Notifiable,HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     protected $fillable = ['username', 'email', 'password', 'email_verified_at', 'role_id'];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::created(function ($model) {
+            $model->generateOtp();
+        });
+    }
+
+    public function generateOtp()
+    {
+        do {
+            $randNumber = mt_rand(100000, 999999);
+            $check = Otp::where('otp', $randNumber)->first();
+        } while ($check);
+
+        $now = Carbon::now();
+
+        Otp::updateOrCreate(
+            ['user_id' => $this->id],
+            ['otp' => $randNumber, 'valid_until' => $now->addMinutes(5)],
+        );
+    }
 
     public function role()
     {
