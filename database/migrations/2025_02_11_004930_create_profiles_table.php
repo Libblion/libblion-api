@@ -20,8 +20,9 @@ return new class extends Migration
             $table->string('address');
             $table->string('phone_number');
             $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

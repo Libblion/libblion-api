@@ -17,6 +17,7 @@ return new class extends Migration
             $table->uuid('book_id');
             $table->uuid('approved_by');
             $table->enum('status', ['pending', 'approved', 'returned'])->default('pending');
+            $table->date('borrow_date')->nullable();
             $table->date('return_date')->nullable();
             $table->timestamps();
 

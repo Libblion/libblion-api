@@ -16,12 +16,13 @@ return new class extends Migration
             $table->string('title');
             $table->string('cover_image')->nullable();
             $table->text('description')->nullable();
-            $table->uuid('author_id');
             $table->integer('release_year');
+            $table->uuid('author_id');
+            $table->uuid('category_id');
             $table->timestamps();
 
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
-            $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('author_id')->references('id')->on('authors')->onDelete('cascade');
         });
     }
 
