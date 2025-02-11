@@ -24,7 +24,11 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        $category = Category::create($request->all());
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+        ]);
+
+        $category = Category::create($validatedData);
         return response()->json($category, 201);
     }
 
@@ -32,7 +36,11 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if ($category) {
-            $category->update($request->all());
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            ]);
+
+            $category->update($validatedData);
             return response()->json($category);
         } else {
             return response()->json(['message' => 'Category not found'], 404);

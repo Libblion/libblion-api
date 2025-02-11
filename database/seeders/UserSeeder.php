@@ -42,6 +42,15 @@ class UserSeeder extends Seeder
                 'created_at' => $timestamp,
                 'updated_at' => $timestamp,
             ],
+            [
+                'id' => Str::uuid(),
+                'username' => 'PenjagaUser',
+                'email' => 'penjaga@example.com',
+                'password' => Hash::make('password'),
+                'role_id' => 3, // Assuming 3 is the ID for penjaga
+                'created_at' => $timestamp,
+                'updated_at' => $timestamp,
+            ],
         ]);
     }
 }
