@@ -18,7 +18,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->integer('release_year');
             $table->uuid('author_id');
-            $table->uuid('category_id');
             $table->timestamps();
 
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
