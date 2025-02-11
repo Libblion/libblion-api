@@ -1,8 +1,12 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\AuthorController;
+use App\Http\Controllers\API\ReviewController;
+use App\Http\Controllers\API\BorrowingController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +44,13 @@ Route::prefix('v1')->group(function () {
 
     //Books Route
     Route::apiResource('books', BookController::class);
+
+    //Author Route
+    Route::apiResource('authors', AuthorController::class);
+
+    //Review Route
+    Route::apiResource('reviews', ReviewController::class);
+
+    //Borrowing Route
+    Route::apiResource('borrowings', BorrowingController::class);
 });
