@@ -4,9 +4,8 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\AuthorController;
 use App\Http\Controllers\API\ReviewController;
 use App\Http\Controllers\API\BorrowingController;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\CategoryController;
-use App\Models\Review;
+use App\Http\Controllers\API\BookController;
+use App\Http\Controllers\API\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
