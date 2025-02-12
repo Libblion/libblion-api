@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
@@ -8,9 +10,18 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class BookController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth.api','auth.access'])->except('index','show');
+    }
+
     public function index()
     {
-        return response()->json(Book::with(['author', 'category', 'reviews', 'borrowings'])->get());
+        $books = Book::with(['author', 'category', 'reviews', 'borrowings'])->get();
+        return response()->json([
+            "message" => "successfully retrieve all books",
+            "data" => $books
+        ]);
     }
 
     public function show($id)
