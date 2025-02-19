@@ -107,10 +107,14 @@ class BookController extends Controller
             return $book;
         });
 
-        $recommendedBooks = Book::whereNotIn('id', $mostBorrowedBooks->pluck('id'))
+        $recommendedBooks = Book::with('author')->whereNotIn('id', $mostBorrowedBooks->pluck('id'))
         ->orderBy('created_at', 'DESC')
         ->limit(3)
-        ->get();
+        ->get()
+        ->map(function ($book) {
+            $book->author->makeHidden(['created_at', 'updated_at']);
+            return $book;
+        });
 
         if ($mostBorrowedBooks->isEmpty()) {
             return response()->json(['message' => 'No books found'], 404);
