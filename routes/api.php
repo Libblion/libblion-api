@@ -44,6 +44,8 @@ Route::prefix('v1')->group(function () {
     //Books Route
     Route::apiResource('books', BookController::class);
 
+    Route::get('/books/most/borrowed',[BookController::class,'recommendedBooks']);
+
     //Author Route
     Route::apiResource('authors', AuthorController::class);
 

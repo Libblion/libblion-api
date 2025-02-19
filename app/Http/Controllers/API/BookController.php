@@ -12,7 +12,7 @@ class BookController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth.api','auth.access'])->except('index','show');
+        $this->middleware(['auth.api','auth.access'])->except('index','show','recommendedBooks');
     }
 
     public function index()
@@ -94,5 +94,30 @@ class BookController extends Controller
         } else {
             return response()->json(['message' => 'Book not found'], 404);
         }
+    }
+
+    public function recommendedBooks (){
+
+        $mostBorrowedBooks = Book::withCount('borrowings')
+        ->orderBy('borrowings_count','DESC')
+        ->limit(2)
+        ->get();
+
+        $recommendedBooks = Book::whereNotIn('id', $mostBorrowedBooks->pluck('id'))
+        ->orderBy('created_at', 'DESC')
+        ->limit(3)
+        ->get();
+
+        if ($mostBorrowedBooks->isEmpty()) {
+            return response()->json(['message' => 'No books found'], 404);
+        }
+
+        return response()->json([
+            "message" => "Most Borrowed Books",
+            "data" => [
+                "most_borrowed_books" => $mostBorrowedBooks,
+                "recommended_books" => $recommendedBooks
+            ]
+        ]);
     }
 }

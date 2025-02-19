@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class ReviewSeeder extends Seeder
 {
@@ -14,28 +14,33 @@ class ReviewSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-        $user_id = DB::table('users')->where('username', 'RegularUser')->value('id');
-        $book_id = DB::table('books')->where('title', 'Seeder Buku 2')->value('id');
-        DB::table('reviews')->insert([
-            [
+        $faker = Faker::create();
+
+        // Ambil semua ID Users & Books
+        $user_ids = DB::table('users')->pluck('id')->toArray();
+        $book_ids = DB::table('books')->pluck('id')->toArray();
+
+        // Pastikan ada data User & Book sebelum menjalankan seeder
+        if (empty($user_ids) || empty($book_ids)) {
+            echo "⚠️ Tidak ada data user atau buku di database!\n";
+            return;
+        }
+
+        // Insert 10 Review
+        $reviews = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $reviews[] = [
                 'id' => Str::uuid(),
-                'user_id' => $user_id,
-                'book_id' => $book_id,
-                'rating' => 5,
-                'comment' => 'Sangat Menakjubkan',
+                'user_id' => $faker->randomElement($user_ids), // Pilih user secara acak
+                'book_id' => $faker->randomElement($book_ids), // Pilih buku secara acak
+                'rating' => $faker->numberBetween(1, 5), // Rating 1-5
+                'comment' => $faker->sentence(6), // Komentar acak
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'id' => Str::uuid(),
-                'user_id' => $user_id,
-                'book_id' => $book_id,
-                'rating' => 4,
-                'comment' => 'keren banget',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            ];
+        }
+
+        DB::table('reviews')->insert($reviews);
+        echo "10 Review berhasil ditambahkan!\n";
     }
 }

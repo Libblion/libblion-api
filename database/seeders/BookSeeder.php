@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class BookSeeder extends Seeder
 {
@@ -14,31 +14,35 @@ class BookSeeder extends Seeder
      */
     public function run(): void
     {
-        $author_id = DB::table('authors')->where('first_name', 'Jane')->value('id');
-        $category_id = DB::table('categories')->where('name', 'action')->value('id');
-        DB::table('books')->insert([
-            [
+        $faker = Faker::create();
+
+        // Ambil ID Penulis dan Kategori Secara Acak
+        $author_ids = DB::table('authors')->pluck('id')->toArray();
+        $category_ids = DB::table('categories')->pluck('id')->toArray();
+
+        // Jika tidak ada data di tabel authors atau categories, hentikan seeding
+        if (empty($author_ids) || empty($category_ids)) {
+            echo "⚠️ Tidak ada data author atau category di database!\n";
+            return;
+        }
+
+        // Insert 10 Buku
+        $books = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $books[] = [
                 'id' => Str::uuid(),
-                'title' => 'Perjalanan Hidup Mang Panca',
-                'cover_image' => 'https://cdn.rri.co.id/berita/Samarinda/o/1724106965439-Buku_PNG_Transparent_With_Clear_Background_ID_100834___TopPNG/bgz2waop0l7mdt3.jpeg',
-                'description' => 'lorem ipsum dolor sit amet',
-                'author_id' => $author_id,
-                'category_id' => $category_id,
-                'release_year' => 2025,
+                'title' => $faker->sentence(4), // Judul Random
+                'cover_image' => $faker->imageUrl(200, 300, 'books'), // Gambar Random
+                'description' => $faker->paragraph(), // Deskripsi Random
+                'author_id' => $faker->randomElement($author_ids), // Ambil ID Penulis Acak
+                'category_id' => $faker->randomElement($category_ids), // Ambil ID Kategori Acak
+                'release_year' => $faker->year(), // Tahun Rilis Random
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'id' => Str::uuid(),
-                'title' => 'Seeder Buku 2',
-                'cover_image' => 'https://cdn.rri.co.id/berita/Samarinda/o/1724106965439-Buku_PNG_Transparent_With_Clear_Background_ID_100834___TopPNG/bgz2waop0l7mdt3.jpeg',
-                'description' => 'lorem ipsum dolor sit amet',
-                'author_id' => $author_id,
-                'category_id' => $category_id,
-                'release_year' => 2025,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            ];
+        }
+
+        DB::table('books')->insert($books);
+        echo "10 Buku berhasil ditambahkan!\n";
     }
 }
