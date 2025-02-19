@@ -8,9 +8,38 @@ use Illuminate\Http\Request;
 
 class BorrowingController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware(['auth.api', 'auth.access'])->only('aproved_by');
+    }
+
+
+    public function aproved_by(string $id)
+    {
+        $borrowing = Borrowing::findOrFail($id)->first();
+
+        if (!$borrowing) {
+            return response()->json(['message' => 'Borrowing not found'], 404);
+        }
+
+        $admin = auth()->user();
+
+
+        $borrowing->update([
+            'status' => 'approved',
+            'approved_by' => $admin->id,
+        ]);
+
+
+        return response()->json([
+            'message' => 'Borrowing approved successfully',
+        ], 200);
+    }
+
     public function index()
     {
-        $data = Borrowing::with(['user', 'book'])->get();
+        $data = Borrowing::with(['user', 'book', 'approvedBy'])->get();
         return response([
             'message' => 'Successfully retrieved borrowing data',
             'data' => $data

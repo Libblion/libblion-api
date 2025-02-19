@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Borrowing extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory, HasUuids;
 
     protected $fillable = ['user_id', 'book_id', 'status', 'approved_by', 'return_date'];
 
@@ -20,5 +20,10 @@ class Borrowing extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    public function approvedBy()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
