@@ -98,10 +98,14 @@ class BookController extends Controller
 
     public function recommendedBooks (){
 
-        $mostBorrowedBooks = Book::withCount('borrowings')
+        $mostBorrowedBooks = Book::with('author')->withCount('borrowings')
         ->orderBy('borrowings_count','DESC')
         ->limit(2)
-        ->get();
+        ->get()
+        ->map(function ($book) {
+            $book->author->makeHidden(['created_at', 'updated_at']);
+            return $book;
+        });
 
         $recommendedBooks = Book::whereNotIn('id', $mostBorrowedBooks->pluck('id'))
         ->orderBy('created_at', 'DESC')
