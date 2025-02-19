@@ -22,7 +22,7 @@ class BookSeeder extends Seeder
 
         // Jika tidak ada data di tabel authors atau categories, hentikan seeding
         if (empty($author_ids) || empty($category_ids)) {
-            echo "⚠️ Tidak ada data author atau category di database!\n";
+            echo "Tidak ada data author atau category di database!\n";
             return;
         }
 

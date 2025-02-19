@@ -23,7 +23,7 @@ class BorrowingSeeder extends Seeder
 
         // Jika tidak ada data user atau book, hentikan seeding
         if (empty($user_ids) || empty($book_ids) || empty($approved_by_ids)) {
-            echo "⚠️ Tidak ada data user atau buku di database!\n";
+            echo "Tidak ada data user atau buku di database!\n";
             return;
         }
 

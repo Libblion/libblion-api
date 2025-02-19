@@ -22,7 +22,7 @@ class ReviewSeeder extends Seeder
 
         // Pastikan ada data User & Book sebelum menjalankan seeder
         if (empty($user_ids) || empty($book_ids)) {
-            echo "⚠️ Tidak ada data user atau buku di database!\n";
+            echo "Tidak ada data user atau buku di database!\n";
             return;
         }
 
