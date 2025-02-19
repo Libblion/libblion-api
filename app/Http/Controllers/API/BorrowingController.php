@@ -17,11 +17,9 @@ class BorrowingController extends Controller
 
     public function aproved_by(string $id)
     {
-        $borrowing = Borrowing::findOrFail($id)->first();
+        $borrowing = Borrowing::findOrFail($id);
 
-        if (!$borrowing) {
-            return response()->json(['message' => 'Borrowing not found'], 404);
-        }
+       
 
         $admin = auth()->user();
 
@@ -34,6 +32,7 @@ class BorrowingController extends Controller
 
         return response()->json([
             'message' => 'Borrowing approved successfully',
+            'data' => $borrowing
         ], 200);
     }
 
