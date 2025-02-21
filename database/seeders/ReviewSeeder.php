@@ -28,7 +28,7 @@ class ReviewSeeder extends Seeder
 
         // Insert 10 Review
         $reviews = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $reviews[] = [
                 'id' => Str::uuid(),
                 'user_id' => $faker->randomElement($user_ids), // Pilih user secara acak

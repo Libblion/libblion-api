@@ -29,7 +29,7 @@ class BorrowingSeeder extends Seeder
 
         // Insert 10 Data Borrowing
         $borrowings = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $borrowings[] = [
                 'id' => Str::uuid(),
                 'user_id' => $faker->randomElement($user_ids),

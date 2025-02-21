@@ -12,7 +12,7 @@ class BookController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth.api','auth.access'])->except('index','show','recommendedBooks');
+        $this->middleware(['auth.api', 'auth.access'])->except('index', 'show', 'recommendedBooks');
     }
 
     public function index()
@@ -96,25 +96,30 @@ class BookController extends Controller
         }
     }
 
-    public function recommendedBooks (){
+    public function recommendedBooks(Request $request)
+    {
+
+        $skip = $request->query('skip', 0);
+        $limit = $request->query('limit',2);
 
         $mostBorrowedBooks = Book::with('author')->withCount('borrowings')
-        ->orderBy('borrowings_count','DESC')
-        ->limit(2)
-        ->get()
-        ->map(function ($book) {
-            $book->author->makeHidden(['created_at', 'updated_at']);
-            return $book;
-        });
+            ->orderBy('borrowings_count', 'DESC')
+            ->skip($skip)
+            ->limit($limit)
+            ->get()
+            ->map(function ($book) {
+                $book->author->makeHidden(['created_at', 'updated_at']);
+                return $book;
+            });
 
         $recommendedBooks = Book::with('author')->whereNotIn('id', $mostBorrowedBooks->pluck('id'))
-        ->orderBy('created_at', 'DESC')
-        ->limit(3)
-        ->get()
-        ->map(function ($book) {
-            $book->author->makeHidden(['created_at', 'updated_at']);
-            return $book;
-        });
+            ->orderBy('created_at', 'DESC')
+            ->limit(3)
+            ->get()
+            ->map(function ($book) {
+                $book->author->makeHidden(['created_at', 'updated_at']);
+                return $book;
+            });
 
         if ($mostBorrowedBooks->isEmpty()) {
             return response()->json(['message' => 'No books found'], 404);

@@ -28,7 +28,7 @@ class BookSeeder extends Seeder
 
         // Insert 10 Buku
         $books = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $books[] = [
                 'id' => Str::uuid(),
                 'title' => $faker->sentence(4), // Judul Random
