@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ReviewController;
 use App\Http\Controllers\API\BorrowingController;
 use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\ProfileControler;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,8 @@ Route::prefix('v1')->group(function () {
         Route::post('generate-otp-code', [AuthController::class, 'generateOtpCode'])->middleware('auth.api');
     });
 
+    // Profile Route
+    Route::post('/profile', [ProfileControler::class, 'updateProfile'])->middleware('auth.api');
     //Categories Route
     Route::apiResource('categories', CategoryController::class);
 
