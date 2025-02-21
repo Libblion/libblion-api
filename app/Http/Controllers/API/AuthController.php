@@ -71,7 +71,7 @@ class AuthController extends Controller
     public function currentUser()
     {
         $user = auth()->user();
-        $userData = User::with(['role', 'profile', 'borrowings', 'reviews'])->find($user->id);
+        $userData = User::with(['role', 'profile', 'borrowings.book', 'reviews'])->find($user->id);
 
         return response()->json([
             'message' => 'user ditemukan',
