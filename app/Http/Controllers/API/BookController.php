@@ -15,14 +15,29 @@ class BookController extends Controller
         $this->middleware(['auth.api', 'auth.access'])->except('index', 'show', 'recommendedBooks');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::with(['author', 'category', 'reviews'])->get();
+        $categoryId = $request->query('category_id'); // Ambil category_id dari request (opsional)
+        $search = $request->query('search'); // Ambil parameter pencarian judul (opsional)
+
+        $books = Book::with(['author', 'category', 'reviews'])
+            ->when($categoryId, function ($query) use ($categoryId) {
+                // Jika category_id diberikan, filter berdasarkan kategori
+                $query->where('category_id', $categoryId);
+            })
+            ->when($search, function ($query) use ($search) {
+                // Jika search query diberikan, cari berdasarkan judul buku saja
+                $query->where('title', 'like', "%{$search}%");
+            })
+            ->get();
+
         return response()->json([
-            "message" => "successfully retrieve all books",
+            "message" => "Successfully retrieved books",
             "data" => $books
         ]);
     }
+
+
 
     public function show($id)
     {
