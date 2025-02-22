@@ -42,6 +42,7 @@ class BorrowingController extends Controller
         ], 200);
     }
 
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -106,5 +107,28 @@ class BorrowingController extends Controller
         return response([
             'message' => 'Borrowing successfully deleted'
         ], 200);
+    }
+
+
+    public function countBorrow()
+    {
+        $count = Borrowing::count();
+
+        return response()->json([
+            "message" => "Total books count",
+            "count" => $count
+        ]);
+    }
+
+    public function bookBorrowed ()
+    {
+        $borrow = Borrowing::with('book.author')->whereNot('status','done')
+        ->limit(5)
+        ->get();
+
+        return response()->json([
+            "message" => "sucessfully get borrowed book",
+            "data" => $borrow
+        ]);
     }
 }

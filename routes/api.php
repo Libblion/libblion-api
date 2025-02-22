@@ -7,6 +7,7 @@ use App\Http\Controllers\API\BorrowingController;
 use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ProfileControler;
+use App\Models\Borrowing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,5 +58,8 @@ Route::prefix('v1')->group(function () {
 
     //Borrowing Route
     Route::apiResource('borrowings', BorrowingController::class);
+
+    Route::get('/borrow', [BorrowingController::class,'bookBorrowed']);
+    Route::get('/borrow/count', [BorrowingController::class,'countBorrow']);
     Route::put('borrowings/{id}/aproved_by', [BorrowingController::class, 'aproved_by']);
 });
