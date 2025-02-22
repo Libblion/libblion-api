@@ -21,20 +21,24 @@ class BorrowingSeeder extends Seeder
         $book_ids = DB::table('books')->pluck('id')->toArray();
         $approved_by_ids = DB::table('users')->pluck('id')->toArray(); // Bisa diubah ke role tertentu
 
+
         // Jika tidak ada data user atau book, hentikan seeding
         if (empty($user_ids) || empty($book_ids) || empty($approved_by_ids)) {
             echo "Tidak ada data user atau buku di database!\n";
             return;
         }
 
+        $statuses = ['pending', 'approved', 'returned'];
         // Insert 10 Data Borrowing
         $borrowings = [];
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 300; $i++) {
+            $status = $faker->randomElement($statuses);
             $borrowings[] = [
                 'id' => Str::uuid(),
                 'user_id' => $faker->randomElement($user_ids),
                 'book_id' => $faker->randomElement($book_ids),
                 'approved_by' => $faker->randomElement($approved_by_ids),
+                'status' => $status,
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

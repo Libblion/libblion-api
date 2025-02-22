@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class AuthorSeeder extends Seeder
 {
@@ -13,25 +14,22 @@ class AuthorSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('authors')->insert([
-            [
+        $faker = Faker::create('id_ID');
+
+        for ($i = 0; $i < 20; $i++) {
+            $firstName = $faker->firstName;
+            $lastName = $faker->lastName;
+            $email = strtolower($firstName . '.' . $lastName . '@example.com'); // Email berbasis nama
+
+            DB::table('authors')->insert([
                 'id' => Str::uuid(),
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'email' => 'john.doe@example.com',
-                'no_telp' => '6285758613142',
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'email' => $email,
+                'no_telp' => '62' . $faker->numerify('8##########'), // Format nomor HP Indonesia
                 'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'id' => Str::uuid(),
-                'first_name' => 'Jane',
-                'last_name' => 'Smith',
-                'email' => 'jane.smith@example.com',
-                'no_telp' => '6285777613143',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            ]);
+        }
     }
 }

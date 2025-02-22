@@ -17,7 +17,7 @@ class BookController extends Controller
 
     public function index()
     {
-        $books = Book::with(['author', 'category', 'reviews', 'borrowings'])->get();
+        $books = Book::with(['author', 'category', 'reviews'])->get();
         return response()->json([
             "message" => "successfully retrieve all books",
             "data" => $books
@@ -100,7 +100,7 @@ class BookController extends Controller
     {
 
         $skip = $request->query('skip', 0);
-        $limit = $request->query('limit',2);
+        $limit = $request->query('limit', 2);
 
         $mostBorrowedBooks = Book::with('author')->withCount('borrowings')
             ->orderBy('borrowings_count', 'DESC')

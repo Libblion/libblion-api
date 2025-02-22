@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('user_id');
             $table->uuid('book_id');
-            $table->uuid('approved_by');
+            $table->uuid('approved_by')->nullable();
             $table->enum('status', ['pending', 'approved', 'returned'])->default('pending');
             $table->date('borrow_date')->nullable();
             $table->date('return_date')->nullable();

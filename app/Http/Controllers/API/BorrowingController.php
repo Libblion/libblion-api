@@ -19,10 +19,7 @@ class BorrowingController extends Controller
     {
         $borrowing = Borrowing::findOrFail($id);
 
-       
-
         $admin = auth()->user();
-
 
         $borrowing->update([
             'status' => 'approved',
@@ -50,8 +47,6 @@ class BorrowingController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'book_id' => 'required|exists:books,id',
-            'status' => 'required|string|max:255',
-            'approved_by' => 'required|exists:users,id',
             'return_date' => 'required|date'
         ]);
 
