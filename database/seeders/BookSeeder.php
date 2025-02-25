@@ -32,7 +32,6 @@ class BookSeeder extends Seeder
             $books[] = [
                 'id' => Str::uuid(),
                 'title' => $faker->sentence(4), // Judul Random
-                'cover_image' => $faker->imageUrl(200, 300, 'books'), // Gambar Random
                 'description' => $faker->paragraph(), // Deskripsi Random
                 'author_id' => $faker->randomElement($author_ids), // Ambil ID Penulis Acak
                 'category_id' => $faker->randomElement($category_ids), // Ambil ID Kategori Acak
