@@ -16,35 +16,48 @@ class BorrowingSeeder extends Seeder
     {
         $faker = Faker::create();
 
-        // Ambil ID Users, Books, dan Approved By
-        $user_ids = DB::table('users')->pluck('id')->toArray();
+        // Ambil ID Users yang bukan admin atau penjaga berdasarkan role_id
+        $user_ids = DB::table('users')
+            ->whereNotIn('role_id', [2,3]) // 3 = Penjaga, 4 = Admin
+            ->pluck('id')
+            ->toArray();
+
+        // Ambil ID Books
         $book_ids = DB::table('books')->pluck('id')->toArray();
-        $approved_by_ids = DB::table('users')->pluck('id')->toArray(); // Bisa diubah ke role tertentu
 
+        // Ambil ID Approved By (hanya admin atau penjaga yang dapat menyetujui)
+        $approved_by_ids = DB::table('users')
+            ->whereIn('role_id', [2, 3])
+            ->pluck('id')
+            ->toArray();
 
-        // Jika tidak ada data user atau book, hentikan seeding
+        // Jika tidak ada data user yang valid atau book, hentikan seeding
         if (empty($user_ids) || empty($book_ids) || empty($approved_by_ids)) {
-            echo "Tidak ada data user atau buku di database!\n";
+            echo "Tidak ada data user yang valid atau buku di database!\n";
             return;
         }
 
-        $statuses = ['pending', 'approved', 'returned'];
-        // Insert 10 Data Borrowing
+        $statuses = ['pending', 'approved', 'returned', 'overdue'];
+        // Insert 300 Data Borrowing
         $borrowings = [];
         for ($i = 1; $i <= 300; $i++) {
             $status = $faker->randomElement($statuses);
+            $created_at = $faker->dateTimeBetween('-1 year', 'now');
+            $return_date = (clone $created_at)->modify('+14 days');
+
             $borrowings[] = [
                 'id' => Str::uuid(),
                 'user_id' => $faker->randomElement($user_ids),
                 'book_id' => $faker->randomElement($book_ids),
                 'approved_by' => $faker->randomElement($approved_by_ids),
                 'status' => $status,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $created_at,
+                'updated_at' => $created_at,
+                'return_date' => $return_date,
             ];
         }
 
         DB::table('borrowings')->insert($borrowings);
-        echo "10 Borrowing data berhasil ditambahkan!\n";
+        echo "300 Borrowing data berhasil ditambahkan!\n";
     }
 }

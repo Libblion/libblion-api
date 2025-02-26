@@ -59,7 +59,11 @@ Route::prefix('v1')->group(function () {
     //Borrowing Route
     Route::apiResource('borrowings', BorrowingController::class);
 
-    Route::get('/borrow', [BorrowingController::class,'bookBorrowed']);
-    Route::get('/borrow/count', [BorrowingController::class,'countBorrow']);
+    Route::prefix('borrow')->group(function(){
+        Route::get('', [BorrowingController::class,'bookBorrowed']);
+        Route::get('count', [BorrowingController::class,'countBorrow']);
+        Route::get('overdue', [BorrowingController::class,'overdueBorrowing']);
+    });
+
     Route::put('borrowings/{id}/aproved_by', [BorrowingController::class, 'aproved_by']);
 });

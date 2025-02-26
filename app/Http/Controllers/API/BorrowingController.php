@@ -33,9 +33,16 @@ class BorrowingController extends Controller
         ], 200);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = Borrowing::with(['user', 'book', 'approvedBy'])->get();
+        $status = $request->query('status');
+        if ($status) {
+            $data = Borrowing::where('status', $status)->with(['user', 'book', 'approvedBy'])->get();
+        } else {
+            $data = Borrowing::with(['user', 'book', 'approvedBy'])
+                ->orderByRaw("FIELD(status, 'pending', 'approved', 'returned', 'overdue')")
+                ->get();
+        }
         return response([
             'message' => 'Successfully retrieved borrowing data',
             'data' => $data
@@ -110,9 +117,14 @@ class BorrowingController extends Controller
     }
 
 
-    public function countBorrow()
+    public function countBorrow(Request $request)
     {
-        $count = Borrowing::count();
+        $status = $request->query('status');
+        if ($status) {
+            $count = Borrowing::where('status', $status)->count();
+        } else {
+            $count = Borrowing::count();
+        }
 
         return response()->json([
             "message" => "Total books count",
@@ -120,15 +132,24 @@ class BorrowingController extends Controller
         ]);
     }
 
-    public function bookBorrowed ()
+    public function bookBorrowed()
     {
-        $borrow = Borrowing::with('book.author')->whereNot('status','done')
-        ->limit(5)
-        ->get();
+        $borrow = Borrowing::with('book.author')->whereNot('status', 'done')
+            ->limit(5)
+            ->get();
 
         return response()->json([
             "message" => "sucessfully get borrowed book",
             "data" => $borrow
+        ]);
+    }
+
+    public function overdueBorrowing()
+    {
+        $books = Borrowing::where('status', 'overdue')->with('book.author', 'user')->get();
+        return response()->json([
+            "message" => "successfully get overdue borowwing",
+            "data" => $books
         ]);
     }
 }
