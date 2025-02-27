@@ -13,7 +13,12 @@ class FineController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index() {}
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
         $borrow_id = $request->query('id');
         $borrow = Borrowing::findOrFail($borrow_id);
@@ -44,14 +49,6 @@ class FineController extends Controller
         ]);
 
         return response()->json(['message' => 'Denda berhasil ditambahkan', 'fine' => $fine], 201);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
