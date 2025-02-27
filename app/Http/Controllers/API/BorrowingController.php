@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use App\Models\Borrowing;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class BorrowingController extends Controller
 {
@@ -55,10 +56,15 @@ class BorrowingController extends Controller
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'book_id' => 'required|exists:books,id',
-            'return_date' => 'required|date'
         ]);
 
-        $borrowing = Borrowing::create($validated);
+        $borrowing = Borrowing::create([
+            'user_id' => $validated['user_id'],
+            'book_id' => $validated['book_id'],
+            'borrow_date' => now(),
+            'return_date' => Carbon::now()->addDays(7),
+            'status' => 'pending'
+        ]);
 
         return response([
             'message' => 'Borrowing successfully added',
