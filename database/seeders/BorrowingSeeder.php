@@ -43,8 +43,7 @@ class BorrowingSeeder extends Seeder
         for ($i = 1; $i <= 300; $i++) {
             $status = $faker->randomElement($statuses);
             $created_at = $faker->dateTimeBetween('-1 year', 'now');
-            $return_date = (clone $created_at)->modify('+14 days');
-
+            $return_date = (clone $created_at)->modify('+7 days');
             $borrowings[] = [
                 'id' => Str::uuid(),
                 'user_id' => $faker->randomElement($user_ids),
@@ -54,6 +53,7 @@ class BorrowingSeeder extends Seeder
                 'created_at' => $created_at,
                 'updated_at' => $created_at,
                 'return_date' => $return_date,
+                'borrow_date' => $created_at
             ];
         }
 
