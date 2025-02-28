@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Book;
 use Illuminate\Http\Request;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -74,27 +74,57 @@ class BookController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Log request untuk debugging
+        Log::info('Update Book Request', [
+            'id' => $id,
+            'all_data' => $request->all(),
+            'has_file' => $request->hasFile('cover_image'),
+            'content_type' => $request->header('Content-Type')
+        ]);
+
         $book = Book::find($id);
         if ($book) {
-            $validatedData = $request->validate([
+            // Buat aturan validasi dasar
+            $rules = [
                 'title' => 'required|string|max:255',
-                'cover_image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'description' => 'required|string',
                 'release_year' => 'required|numeric',
                 'author_id' => 'required|exists:authors,id',
                 'category_id' => 'required|exists:categories,id',
-            ]);
+            ];
 
+            // Jika ada file cover_image baru, tambahkan validasi untuk itu
             if ($request->hasFile('cover_image')) {
-                $uploadedFileUrl = Cloudinary::upload($request->file('cover_image')->getRealPath())->getSecurePath();
-                $validatedData['cover_image'] = $uploadedFileUrl;
+                $rules['cover_image'] = 'image|mimes:jpeg,png,jpg,gif|max:2048';
             }
 
-            $book->update($validatedData);
-            return response()->json([
-                'message' => 'Book updated successfully',
-                'book' => $book->load(['author', 'category', 'reviews', 'borrowings'])
-            ]);
+            try {
+                $validatedData = $request->validate($rules);
+
+                // Log validated data
+                Log::info('Validated Data', $validatedData);
+
+                // Jika ada file cover_image baru, upload ke Cloudinary
+                if ($request->hasFile('cover_image')) {
+                    $uploadedFileUrl = Cloudinary::upload($request->file('cover_image')->getRealPath())->getSecurePath();
+                    $validatedData['cover_image'] = $uploadedFileUrl;
+                }
+
+                $book->update($validatedData);
+                return response()->json([
+                    'message' => 'Book updated successfully',
+                    'book' => $book->load(['author', 'category', 'reviews', 'borrowings'])
+                ]);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                Log::error('Validation Error', [
+                    'errors' => $e->errors(),
+                    'request_data' => $request->all()
+                ]);
+                return response()->json([
+                    'message' => $e->getMessage(),
+                    'errors' => $e->errors()
+                ], 422);
+            }
         } else {
             return response()->json(['message' => 'Book not found'], 404);
         }
