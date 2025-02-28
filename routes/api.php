@@ -6,6 +6,7 @@ use App\Http\Controllers\API\ReviewController;
 use App\Http\Controllers\API\BorrowingController;
 use App\Http\Controllers\API\BookController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\FineController;
 use App\Http\Controllers\API\ProfileControler;
 use App\Models\Borrowing;
 use Illuminate\Http\Request;
@@ -58,6 +59,9 @@ Route::prefix('v1')->group(function () {
 
     //Borrowing Route
     Route::apiResource('borrowings', BorrowingController::class);
+
+    // Fine Route
+    Route::apiResource('fine',FineController::class);
 
     Route::prefix('borrow')->group(function(){
         Route::get('', [BorrowingController::class,'bookBorrowed']);

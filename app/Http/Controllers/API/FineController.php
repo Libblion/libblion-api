@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Borrowing;
 use App\Models\Fine;
+use App\Services\MidtransService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,12 @@ class FineController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+    public function index()
+    {
+        return response()->json([
+            "message" => "getfine"
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -47,8 +53,23 @@ class FineController extends Controller
             'fine_amount' => $fine_amount,
             'paid' => 'unpaid',
         ]);
+        $customer_detail = array(
+            'first_name' => 'budi',
+            'last_name' => 'pratama',
+            'email' => 'budi.pra@example.com',
+            'phone' => '08111222333',
+        );
+        $token = '';
 
-        return response()->json(['message' => 'Denda berhasil ditambahkan', 'fine' => $fine], 201);
+        if ($fine) {
+            $midtransService = new MidtransService();
+            $token = $midtransService->createTransaction($fine->id, $fine->fine_amount, $customer_detail);
+        }
+
+        return response()->json(
+            ['message' => 'Denda berhasil ditambahkan', 'fine' => $fine, 'token' => $token],
+            201
+        );
     }
 
     /**

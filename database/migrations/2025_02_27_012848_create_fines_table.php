@@ -12,12 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fines', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid('id');
             $table->uuid('user_id');
             $table->uuid('borrow_id');
             $table->integer('overdue_days');
             $table->decimal('fine_amount',10,2);
             $table->enum('paid',['success','pending','unpaid']);
+            $table->timestamps();
 
 
             $table->foreign('user_id')->references('id')->on('users');
