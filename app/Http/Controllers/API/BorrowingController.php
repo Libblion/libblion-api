@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Carbon\Carbon;
 use App\Models\Borrowing;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
 class BorrowingController extends Controller
@@ -36,14 +37,43 @@ class BorrowingController extends Controller
 
     public function index(Request $request)
     {
+        Log::info('Borrowing search request', $request->all());
+
+        $query = Borrowing::with(['user', 'book', 'approvedBy']);
+
+        // Filter berdasarkan status
         $status = $request->query('status');
         if ($status) {
-            $data = Borrowing::where('status', $status)->with(['user', 'book', 'approvedBy'])->get();
-        } else {
-            $data = Borrowing::with(['user', 'book', 'approvedBy'])
-                ->orderByRaw("FIELD(status, 'pending', 'approved', 'returned', 'overdue')")
-                ->get();
+            $query->where('status', $status);
+            Log::info('Filtering by status', ['status' => $status]);
         }
+
+        // Pencarian berdasarkan keyword (judul buku atau username)
+        $search = $request->query('search');
+        if ($search) {
+            Log::info('Searching with keyword', ['search' => $search]);
+            $query->where(function ($q) use ($search) {
+                // Pencarian berdasarkan judul buku
+                $q->whereHas('book', function ($bookQuery) use ($search) {
+                    $bookQuery->where('title', 'like', '%' . $search . '%');
+                })
+                    // Pencarian berdasarkan username
+                    ->orWhereHas('user', function ($userQuery) use ($search) {
+                        $userQuery->where('username', 'like', '%' . $search . '%');
+                    })
+                    // Pencarian berdasarkan nama pengguna yang menyetujui
+                    ->orWhereHas('approvedBy', function ($approverQuery) use ($search) {
+                        $approverQuery->where('username', 'like', '%' . $search . '%');
+                    })
+                    // Pencarian berdasarkan status
+                    ->orWhere('status', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Urutkan hasil
+        $data = $query->orderByRaw("FIELD(status, 'pending', 'approved', 'returned', 'overdue')")
+            ->get();
+
         return response([
             'message' => 'Successfully retrieved borrowing data',
             'data' => $data
