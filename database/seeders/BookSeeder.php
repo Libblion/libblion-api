@@ -73,7 +73,7 @@ class BookSeeder extends Seeder
                 'id' => Str::uuid(),
                 'title' => $faker->sentence(4),
                 'description' => $faker->paragraph(),
-                'cover_image' => 'https://via.placeholder.com/300x450?text=New+Book+2024',
+                'cover_image' => 'https://placehold.co/600x400',
                 'author_id' => $faker->randomElement($author_ids),
                 'category_id' => $faker->randomElement($category_ids),
                 'release_year' => $faker->randomElement([2024, 2025]),
@@ -89,7 +89,7 @@ class BookSeeder extends Seeder
 
     /**
      * Mendapatkan data buku terbaru dari Google Books API
-     * 
+     *
      * @param string $query
      * @return array
      */
