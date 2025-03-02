@@ -10,7 +10,7 @@ class Borrowing extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = ['user_id', 'book_id', 'status', 'approved_by', 'return_date'];
+    protected $fillable = ['user_id', 'book_id', 'status', 'approved_by','borrow_date', 'return_date'];
 
     public function user()
     {
