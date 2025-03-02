@@ -126,7 +126,7 @@ class BorrowingController extends Controller
             'user_id' => 'required|exists:users,id',
             'book_id' => 'required|exists:books,id',
             'status' => 'required|string|max:255',
-            'approved_by' => 'required|exists:users,id',
+            'approved_by' => 'exists:users,id|nullable',
             'return_date' => 'required|date'
         ]);
 
