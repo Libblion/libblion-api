@@ -35,8 +35,8 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
         Route::post('login', [AuthController::class, 'login']);
+        Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'currentUser'])->middleware('auth.api');
-        Route::post('logout', [AuthController::class, 'logout'])->middleware('auth.api');
         Route::post('account-verification', [AuthController::class, 'verifyAccount'])->middleware('auth.api');
         Route::post('generate-otp-code', [AuthController::class, 'generateOtpCode'])->middleware('auth.api');
     });
